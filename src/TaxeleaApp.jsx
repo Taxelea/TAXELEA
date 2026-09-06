@@ -147,15 +147,16 @@ function TestRunnerWrapper({ onComplete }) {
           // Set test data regardless of validation - let the test runner handle it
           setTestData({ ...data, card });
         } else {
-          console.error('Test not found:', testId);
+          // Debug details go to the console for developers; the on-screen
+          // message stays clean and understandable for real users instead
+          // of showing raw internal IDs/counts.
           const sampleIds = allCards.slice(0, 5).map(c => c.id);
-          setError(`Test "${decodedTestId}" not found in available tests. 
-                    Total tests available: ${allCards.length}.
-                    Sample test IDs: ${sampleIds.join(', ')}...`);
+          console.error('Test not found:', { requestedId: decodedTestId, totalAvailable: allCards.length, sampleIds });
+          setError(`This test couldn't be found. It may have been removed, or the link you followed might be out of date.`);
         }
       } catch (err) {
         console.error('Error loading test:', err);
-        setError(`Failed to load test: ${err.message}`);
+        setError(`Something went wrong while loading this test. Please try again, or go back and pick another one.`);
       } finally {
         setLoading(false);
       }
