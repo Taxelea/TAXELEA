@@ -1,7 +1,6 @@
 import { Bookmark, X } from "lucide-react";
 import { Card } from "../components/ui/Card.jsx";
 import { SECTIONAL_COUNTS } from "../data/catalog.js";
-import { EMBEDDED_TESTS } from "../data/embeddedTests.js";
 
 export function BookmarksPage({ bookmarks, toggleBookmark, startPractice, currentUser }) {
   // Filter bookmarks for current user
@@ -21,7 +20,6 @@ export function BookmarksPage({ bookmarks, toggleBookmark, startPractice, curren
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {userBookmarks.map((b) => {
             const subjMeta = SECTIONAL_COUNTS[b.subject];
-            const hasReal = !!EMBEDDED_TESTS[b.key];
             return (
               <Card key={b.key} className="p-4 flex items-center justify-between">
                 <div>
@@ -32,11 +30,9 @@ export function BookmarksPage({ bookmarks, toggleBookmark, startPractice, curren
                   <button onClick={() => toggleBookmark(b.key, b.label, b.subject)} className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-[var(--hover-bg)]">
                     <X size={13} className="text-[var(--text-faint)]" />
                   </button>
-                  {hasReal && (
-                    <button onClick={() => startPractice(b.key)} className="text-xs text-red-500 border border-[var(--accent-soft-border)] rounded-md px-2.5 py-1.5">
-                      Start
-                    </button>
-                  )}
+                  <button onClick={() => startPractice(b.key)} className="text-xs text-red-500 border border-[var(--accent-soft-border)] rounded-md px-2.5 py-1.5">
+                    Start
+                  </button>
                 </div>
               </Card>
             );
