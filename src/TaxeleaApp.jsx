@@ -121,8 +121,6 @@ function TestRunnerWrapper({ onComplete }) {
   useEffect(() => {
     const loadTest = async () => {
       try {
-        console.log('=== TestRunnerWrapper: Loading test ===');
-        console.log('Test ID from URL:', testId);
         
         // Find the test card and load its data
         const { SECTIONAL_TEST_CARDS, FULL_TEST_CARDS } = await import("./data/testCards.js");
@@ -133,24 +131,18 @@ function TestRunnerWrapper({ onComplete }) {
         const allCards = [...SECTIONAL_TEST_CARDS, ...FULL_TEST_CARDS, ...archiveCards];
         const decodedTestId = decodeURIComponent(testId);
         
-        console.log('Decoded test ID:', decodedTestId);
-        console.log('Total available tests:', allCards.length);
         
         // Try exact match first
         let card = allCards.find(c => c.id === decodedTestId);
         
         // If not found, try partial match for tests that might have been truncated in URL
         if (!card) {
-          console.log('Exact match not found, trying partial match...');
           card = allCards.find(c => c.id.includes(decodedTestId) || decodedTestId.includes(c.id));
         }
         
-        console.log('Found card:', card);
         
         if (card && card.path) {
-          console.log('Loading test from path:', card.path);
           const data = await loadTestJSON(card.path);
-          console.log('Test data loaded successfully, questions count:', data?.questions?.length);
           
           // Set test data regardless of validation - let the test runner handle it
           setTestData({ ...data, card });
@@ -165,7 +157,6 @@ function TestRunnerWrapper({ onComplete }) {
         console.error('Error loading test:', err);
         setError(`Failed to load test: ${err.message}`);
       } finally {
-        console.log('Test loading completed, setting loading to false');
         setLoading(false);
       }
     };
@@ -176,14 +167,12 @@ function TestRunnerWrapper({ onComplete }) {
   // Cleanup function to prevent state leaks
   useEffect(() => {
     return () => {
-      console.log('TestRunnerWrapper cleanup - clearing test data');
       setTestData(null);
       setError(null);
       setLoading(true);
     };
   }, []);
 
-  console.log('TestRunnerWrapper render state:', { loading, error, hasTestData: !!testData });
 
   if (loading) {
     return (
@@ -237,7 +226,6 @@ function TestRunnerWrapper({ onComplete }) {
     );
   }
 
-  console.log('Rendering RealTestRunner with full test data:', testData);
   return <RealTestRunner testKey={testData.card} testData={testData} onComplete={onComplete} referrer={referrer} />;
 }
 
@@ -297,7 +285,6 @@ function AppContent({ onAppLoaded }) {
   useEffect(() => {
     (async () => {
       try {
-        console.log('Loading initial data...');
         
         // Check if owner is setup
         const ownerSetup = await isOwnerSetup();
@@ -306,13 +293,11 @@ function AppContent({ onAppLoaded }) {
         // Check if user is authenticated using local storage
         const session = await loadSession();
         const user = await loadCurrentUser();
-        console.log('Current user:', user);
         
         if (user && session) {
           setCurrentUser(user);
           // Load user data
           const [r, b, t, ip] = await Promise.all([loadResults(), loadBookmarks(), loadTheme(), loadInProgressTest()]);
-          console.log('Initial data loaded:', { results: r, bookmarks: b, theme: t, inProgress: ip });
           setResults(r);
           setBookmarks(b);
           setInProgressTest(ip);
@@ -341,7 +326,6 @@ function AppContent({ onAppLoaded }) {
 
   const startPractice = useCallback((testId, cardData) => {
     // Support both old (key only) and new (id, cardData) signatures
-    console.log('startPractice called with:', { testId, cardData });
     
     // If cardData is provided, use it; otherwise create a basic object
     const card = cardData || { id: testId };
@@ -349,7 +333,6 @@ function AppContent({ onAppLoaded }) {
     // If testId is the card object itself (from new signature), use it
     const finalCard = typeof testId === 'object' ? testId : card;
     
-    console.log('Final card data:', finalCard);
     
     // Navigate with referrer state to enable proper back navigation
     navigate(`/practice/${encodeURIComponent(finalCard.id)}`, { 
@@ -509,7 +492,6 @@ export default function TaxeleaApp() {
   useEffect(() => {
     const safetyTimeout = setTimeout(() => {
       if (isLoading) {
-        console.log('Safety timeout: Force hiding loading screen');
         setIsLoading(false);
       }
     }, 3000); // 3 second safety timeout - faster to prevent white screen

@@ -244,7 +244,6 @@ export function SectionalMocks({ startPractice, bookmarks, toggleBookmark, curre
                             </button>
                             <button
                               onClick={() => {
-                                console.log('Starting sectional test with card:', card);
                                 startPractice(card.id, card);
                               }}
                               disabled={!timingConfig[card.id]}
