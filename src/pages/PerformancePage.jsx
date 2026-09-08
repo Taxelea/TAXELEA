@@ -59,7 +59,7 @@ export function PerformancePage({ results, stats, currentUser }) {
             {userResults.map((r) => (
               <div key={r.id} className="flex items-center justify-between py-2 border-b border-[var(--border)] last:border-0">
                 <span className="text-sm text-[var(--text-secondary)]">{r.title}</span>
-                <span className="text-sm text-[var(--text-muted)]">{r.score}/{r.total} · <span className="text-red-500 font-medium">{Math.round((r.score/r.total)*100)}%</span></span>
+                <span className="text-sm text-[var(--text-muted)]">{r.score}/{r.total} · <span className="text-red-500 font-medium">{r.total > 0 ? Math.round((r.score/r.total)*100) : 0}%</span></span>
               </div>
             ))}
           </div>

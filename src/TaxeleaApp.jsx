@@ -385,8 +385,13 @@ function AppContent({ onAppLoaded }) {
 
 
   const stats = useMemo(() => {
-    // Single user system - no filtering needed
-    const userResults = results;
+    // Filter to the current user's own results — results/bookmarks are
+    // already tagged with userId elsewhere (see toggleBookmark, handleComplete),
+    // so this must match. Previously this used ALL results unfiltered
+    // ("single user system" assumption that no longer matched the rest of
+    // the app), which meant every user's stat cards showed combined totals
+    // from every account that had ever used the same browser/storage.
+    const userResults = currentUser ? results.filter(r => r.userId === currentUser.id) : results;
     
     const sessionQuestions = userResults.reduce((s, r) => s + r.total, 0);
     const sessionCorrect = userResults.reduce((s, r) => s + r.score, 0);
@@ -414,7 +419,7 @@ function AppContent({ onAppLoaded }) {
       accDelta: "Based on test results",
       subjectProgress,
     };
-  }, [results]);
+  }, [results, currentUser]);
 
   return (
     <>
