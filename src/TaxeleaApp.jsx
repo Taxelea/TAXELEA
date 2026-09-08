@@ -455,7 +455,7 @@ function AppContent({ onAppLoaded }) {
             <Route path="/practice/:testId" element={<ProtectedRoute currentUser={currentUser}><TestRunnerWrapper onComplete={handleComplete} /></ProtectedRoute>} />
             <Route path="/performance" element={<ProtectedRoute currentUser={currentUser}><PerformancePage results={results} stats={stats} currentUser={currentUser} /></ProtectedRoute>} />
             <Route path="/bookmarks" element={<ProtectedRoute currentUser={currentUser}><BookmarksPage bookmarks={bookmarks} toggleBookmark={toggleBookmark} startPractice={startPractice} currentUser={currentUser} /></ProtectedRoute>} />
-            <Route path="/streak" element={<ProtectedRoute currentUser={currentUser}><StreakPage currentUser={currentUser} results={results} /></ProtectedRoute>} />
+            <Route path="/streak" element={<ProtectedRoute currentUser={currentUser}><StreakPage currentUser={currentUser} results={results} setPage={navigateToPage} /></ProtectedRoute>} />
             <Route path="/leaderboard" element={<ProtectedRoute currentUser={currentUser}><LeaderboardPage currentUser={currentUser} /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute currentUser={currentUser}><SettingsPage currentUser={currentUser} onLogout={handleLogout} /></ProtectedRoute>} />
             <Route path="*" element={<Dashboard setPage={navigateToPage} startPractice={startPractice} results={results} stats={stats} inProgressTest={inProgressTest} currentUser={currentUser} onAuthSuccess={handleAuthSuccess} isFirstTimeSetup={isFirstTimeSetup} />} />

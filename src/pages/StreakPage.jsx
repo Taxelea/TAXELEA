@@ -1,17 +1,7 @@
 import React, { useMemo, useState, useCallback } from "react";
 import {
-  Home,
-  ListChecks,
-  Swords,
-  ClipboardList,
-  Send,
-  Bookmark,
   Flame,
-  Timer,
-  BarChart3,
   Trophy as TrophyIcon,
-  MessageSquare,
-  Settings as SettingsIcon,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
@@ -101,20 +91,6 @@ function buildCalendar(data, endDate) {
   };
 }
 
-const NAV_ITEMS = [
-  { label: "Dashboard", icon: Home },
-  { label: "Problems", icon: ListChecks },
-  { label: "Contests", icon: Swords },
-  { label: "Test Series", icon: ClipboardList },
-  { label: "Submissions", icon: Send },
-  { label: "Bookmarks", icon: Bookmark },
-  { label: "Streak", icon: Flame, active: true },
-  { label: "Pomodoro", icon: Timer },
-  { label: "Reports", icon: BarChart3 },
-  { label: "Leaderboard", icon: TrophyIcon },
-  { label: "Discuss", icon: MessageSquare },
-];
-
 const SETTINGS_ITEMS = [
   { label: "General", icon: SlidersHorizontal },
   { label: "Appearance", icon: Palette },
@@ -157,7 +133,7 @@ function InsightItem({ icon: Icon, color, value, label, sub }) {
   );
 }
 
-export default function StreakPage({ currentUser, results }) {
+export default function StreakPage({ currentUser, results, setPage }) {
   const [showModal, setShowModal] = useState(false);
   const [clearing, setClearing] = useState(false);
   
@@ -437,8 +413,10 @@ export default function StreakPage({ currentUser, results }) {
                     {SETTINGS_ITEMS.map(({ label, icon: Icon, active }) => (
                       <button
                         key={label}
+                        onClick={active ? undefined : () => setPage?.('settings')}
+                        title={active ? "You're viewing this section" : `Go to ${label} in Settings`}
                         className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-left ${
-                          active ? "text-[var(--danger-text)] bg-[var(--danger-bg)]" : "text-[var(--text-secondary)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-primary)]"
+                          active ? "text-[var(--danger-text)] bg-[var(--danger-bg)] cursor-default" : "text-[var(--text-secondary)] hover:bg-[var(--hover-bg)] hover:text-[var(--text-primary)]"
                         }`}
                       >
                         <Icon size={15} />
