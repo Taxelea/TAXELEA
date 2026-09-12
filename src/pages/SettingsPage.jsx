@@ -16,7 +16,6 @@ export function SettingsPage({ currentUser, onLogout }) {
   
   const rows = [
     ["Exam", "SSC CGL"], ["Daily Goal", "5 questions"], ["Difficulty Mix", "Easy · Medium · Hard"],
-    ["Notifications", "Enabled"],
   ];
   
   const handleLogout = () => {
@@ -94,7 +93,7 @@ export function SettingsPage({ currentUser, onLogout }) {
             <User size={16} className="text-[var(--text-muted)]" />
             <div>
               <div className="text-xs text-[var(--text-muted)]">Account Type</div>
-              <div className="text-sm text-[var(--text-primary)]">Premium</div>
+              <div className="text-sm text-[var(--text-primary)]">Free</div>
             </div>
           </div>
         </div>

@@ -584,7 +584,6 @@ export function RealTestRunner({ testKey, testData: propTestData, onComplete, re
       setTimeLeft(prev => {
         if (prev <= 1) {
           setTimerActive(false);
-          setShowSubmitConfirm(true); // Show confirmation dialog
           return 0;
         }
         return prev - 1;
@@ -593,6 +592,16 @@ export function RealTestRunner({ testKey, testData: propTestData, onComplete, re
     
     return () => clearInterval(timer);
   }, [timerActive]);
+
+  // Auto-submit the moment the timer legitimately reaches zero during an
+  // active test — no confirmation dialog, straight to results, matching
+  // real exam software behavior (and what was explicitly requested: time
+  // running out should go straight to the score card, not back anywhere).
+  useEffect(() => {
+    if (hasStarted && !submitted && timeLeft === 0) {
+      confirmSubmit();
+    }
+  }, [timeLeft, hasStarted, submitted, confirmSubmit]);
   
   // Early returns after all hooks
   if (!testData || !testData.questions || testData.questions.length === 0) {
@@ -611,8 +620,14 @@ export function RealTestRunner({ testKey, testData: propTestData, onComplete, re
     );
   }
   
-  // Check if timing is configured before allowing test to start
-  if (timeLeft === 0 && !submitted) {
+  // Check if timing is configured before allowing test to start — only
+  // relevant BEFORE the test has started. Once hasStarted is true, timeLeft
+  // reaching 0 means the countdown legitimately finished (time's up), which
+  // is handled by the auto-submit effect below, not this screen. This used
+  // to also catch the real timeout case (checking only `timeLeft === 0`),
+  // which meant finishing a test on time would incorrectly show this
+  // "not configured, go back" screen instead of the results.
+  if (timeLeft === 0 && !hasStarted && !submitted) {
     return (
       <div className="p-4 sm:p-6 max-w-3xl mx-auto">
         <Card className="p-6 text-center">
@@ -1108,6 +1123,7 @@ export function RealTestRunner({ testKey, testData: propTestData, onComplete, re
 
         {/* Footer controls */}
         <div className="test-footer">
+          <div className="test-footer__inner">
           <div className="test-footer__group">
             <button
               onClick={handleClearResponse}
@@ -1142,6 +1158,7 @@ export function RealTestRunner({ testKey, testData: propTestData, onComplete, re
               </button>
             )}
           </div>
+          </div>
         </div>
       </div>
 
@@ -1163,10 +1180,10 @@ export function RealTestRunner({ testKey, testData: propTestData, onComplete, re
             </button>
           </div>
 
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--elevated-bg)] p-3 mb-2">
-            <div className="flex items-center justify-between text-[11px] text-[var(--text-faint)] mb-2">
-              <span>Time Left</span>
-              <span className="text-[var(--text-primary)] font-semibold">{formatTime(timeLeft)}</span>
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--elevated-bg)] p-4 mb-2">
+            <div className="text-[11px] text-[var(--text-faint)] text-center mb-1 uppercase tracking-wide">Time Left</div>
+            <div className={`text-3xl font-bold text-center font-mono tabular-nums mb-3 ${timeLeft < 300 ? 'text-red-500' : 'text-[var(--text-primary)]'}`}>
+              {formatTime(timeLeft)}
             </div>
             <div className="grid grid-cols-2 gap-2"> 
               <button className="rounded-lg border border-[var(--border)] bg-[var(--card-bg)] py-2 text-xs text-[var(--text-secondary)]">End Test</button>
@@ -1188,7 +1205,7 @@ export function RealTestRunner({ testKey, testData: propTestData, onComplete, re
                 let bgClass = "bg-[var(--hover-bg)]";
                 let textClass = "text-[var(--text-primary)]";
                 if (status === 'answered') { bgClass = "bg-green-600"; textClass = "text-white"; }
-                else if (status === 'marked') { bgClass = "bg-red-600"; textClass = "text-white"; }
+                else if (status === 'marked') { bgClass = "bg-purple-600"; textClass = "text-white"; }
                 else if (status === 'answered-marked') { bgClass = "bg-purple-600"; textClass = "text-white"; }
                 else if (status === 'visited') { bgClass = "bg-[var(--border-strong)]"; textClass = "text-[var(--text-primary)]"; }
 
